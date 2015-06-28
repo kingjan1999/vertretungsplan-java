@@ -14,4 +14,16 @@ public class Vertretungsplan {
         this.infos = infos;
         this.vertretungen = vertretungen;
     }
+
+    public VMeta getMeta() {
+        return meta;
+    }
+
+    public String[] getInfos() {
+        return infos;
+    }
+
+    public List<Map<String, String>> getVertretungen() {
+        return vertretungen;
+    }
 }

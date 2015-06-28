@@ -7,23 +7,34 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
+import java.io.File;
 import java.io.IOException;
+import java.net.URL;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/**
+ * Class for downloading and analyzing Vertretungsplan
+ */
 public class HttpManager {
 
-    private final static String[] toRemove = new String[]{"</span", "<tr class='", "odd", "even", "<td class=\"list\"", "<th class=\"list\"", "align=\"center\"", "list", ">", "'", "</tr", "<span style=\"color: #010101\""};
 
-    final String url;
+    final Document doc;
 
-    public HttpManager(String url) {
-        this.url = url;
+    public HttpManager(String url) throws IOException {
+        doc = Jsoup.connect(url).get();
     }
 
-    public Vertretungsplan fetchPlan() throws IOException {
-        Document doc = Jsoup.connect(url).get();
+    public HttpManager(File f) throws IOException {
+        doc = Jsoup.parse(f, "UTF-8");
+    }
+
+    public HttpManager(URL url) throws IOException {
+        doc = Jsoup.parse(url, 1000);
+    }
+
+    public Vertretungsplan fetchPlan() {
 
         VMeta m = getMeta(doc);
 
@@ -32,7 +43,6 @@ public class HttpManager {
         List<Map<String, String>> vertretungen = getVertretungen(doc);
 
         return new Vertretungsplan(m, infos, vertretungen);
-        //return this.analysePlan(this.loadPlan());
     }
 
     private String[] getInfos(Document doc) {
