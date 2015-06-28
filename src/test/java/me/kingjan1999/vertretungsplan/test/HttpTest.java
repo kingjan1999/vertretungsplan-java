@@ -17,10 +17,12 @@ public class HttpTest {
 
     @Test
     public void testDownload() {
-        HttpManager heute = new HttpManager(heute_url);
+        HttpManager heute = new HttpManager("http://vertretungsplan.gymnasium-eversten.de/subst_002.htm");
+        //HttpManager heute = new HttpManager(heute_url);
 
         try {
-            System.out.println(heute.fetchPlan());
+            heute.fetchPlan();
+            //System.out.println(heute.fetchPlan());
         } catch (IOException e) {
             fail();
         }
