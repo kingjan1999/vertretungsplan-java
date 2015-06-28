@@ -124,7 +124,10 @@ public class HttpManager {
             Map<String, String> eintrag = new HashMap<String, String>();
 
             for (int j = 0; j < cols.size(); j++) {
-                eintrag.put(cats.get(j), cols.get(j).text());
+                if (!eintrag.containsKey(cats.get(j))) //Avoid replacing contents on duplicate col headings
+                    eintrag.put(cats.get(j), cols.get(j).text());
+                else
+                    eintrag.put("("+cats.get(j)+")", cols.get(j).text());
             }
             //System.out.println(eintrag);
             vf.add(eintrag);
