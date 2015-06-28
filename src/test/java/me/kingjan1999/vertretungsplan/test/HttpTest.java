@@ -37,7 +37,7 @@ public class HttpTest {
         try {
             HttpManager heute = new HttpManager(anotherUrl);
             heute.fetchPlan();
-        } catch (IOException e) {
+        } catch (IOException | InstantiationException | IllegalAccessException e) {
             e.printStackTrace();
             fail();
         }
@@ -57,7 +57,7 @@ public class HttpTest {
         try {
             hp1 = new HttpManager(new File(url.getFile()));
             p1 = hp1.fetchPlan();
-        } catch (IOException e) {
+        } catch (IOException | InstantiationException | IllegalAccessException e) {
             e.printStackTrace();
             fail();
         }
@@ -69,6 +69,7 @@ public class HttpTest {
 
         //Test Infos
         assertEquals(4, p1.getInfos().length);
+
 
         //Test some Vertretungen
         assertEquals("3", p1.getVertretungen().get(2).get("Stunde"));
@@ -90,7 +91,7 @@ public class HttpTest {
         try {
             hp2 = new HttpManager(new File(url.getFile()));
             p2 = hp2.fetchPlan();
-        } catch (IOException e) {
+        } catch (IOException | IllegalAccessException | InstantiationException e) {
             e.printStackTrace();
             fail();
         }

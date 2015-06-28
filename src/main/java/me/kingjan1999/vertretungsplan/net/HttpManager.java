@@ -2,6 +2,8 @@ package me.kingjan1999.vertretungsplan.net;
 
 import me.kingjan1999.vertretungsplan.VMeta;
 import me.kingjan1999.vertretungsplan.Vertretungsplan;
+import org.apache.commons.beanutils.DynaBean;
+import org.apache.commons.beanutils.LazyDynaBean;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -10,10 +12,11 @@ import org.jsoup.select.Elements;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 /**
  * Class for downloading and analyzing Vertretungsplan
@@ -35,13 +38,13 @@ public class HttpManager {
         doc = Jsoup.parse(url, 1000);
     }
 
-    public Vertretungsplan fetchPlan() {
+    public Vertretungsplan fetchPlan() throws IllegalAccessException, InstantiationException {
 
         VMeta m = getMeta(doc);
 
         String[] infos = getInfos(doc);
 
-        List<Map<String, String>> vertretungen = getVertretungen(doc);
+        List<DynaBean> vertretungen = getVertretungen(doc);
 
         return new Vertretungsplan(m, infos, vertretungen);
     }
@@ -101,10 +104,10 @@ public class HttpManager {
         return new VMeta(stand, untis_ver, tag, current, max);
     }
 
-    private List<Map<String, String>> getVertretungen(Document doc) {
+    private List<DynaBean> getVertretungen(Document doc) throws InstantiationException, IllegalAccessException {
         List<String> cats = new ArrayList<String>(7);
 
-        List<Map<String, String>> vf = new ArrayList<Map<String, String>>(20);
+        List<DynaBean> vf = new ArrayList<>(20);
 
         Element vertretungsplan = doc.select(".mon_list").get(0);
         Elements vertretungen = vertretungsplan.select("tr");
@@ -113,18 +116,22 @@ public class HttpManager {
 
         //Iterate headings
         //System.out.println(heading.text());
-        cats.addAll(headings.stream().map(Element::text).collect(Collectors.toList()));
+
+        for (Element heading : headings) {
+            //System.out.println(heading.text());
+            if (cats.contains(heading.text())) //Avoid replacing contents on duplicate col headings
+                cats.add("(" + heading.text() + ")");
+            else
+                cats.add(heading.text());
+        }
 
         for (int i = 1; i < vertretungen.size(); i++) {
             Elements cols = vertretungen.get(i).select("td");
 
-            Map<String, String> eintrag = new HashMap<String, String>();
+            DynaBean eintrag = new LazyDynaBean();
 
             for (int j = 0; j < cols.size(); j++) {
-                if (!eintrag.containsKey(cats.get(j))) //Avoid replacing contents on duplicate col headings
-                    eintrag.put(cats.get(j), cols.get(j).text());
-                else
-                    eintrag.put("("+cats.get(j)+")", cols.get(j).text());
+                eintrag.set(cats.get(j), cols.get(j).text());
             }
             //System.out.println(eintrag);
             vf.add(eintrag);

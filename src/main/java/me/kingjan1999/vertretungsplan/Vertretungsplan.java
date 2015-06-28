@@ -1,17 +1,17 @@
 package me.kingjan1999.vertretungsplan;
 
 import com.google.gson.Gson;
+import org.apache.commons.beanutils.DynaBean;
 
 import java.util.List;
-import java.util.Map;
 
 public class Vertretungsplan {
 
     private final VMeta meta;
     private final String[] infos;
-    private final List<Map<String, String>> vertretungen;
+    private final List<DynaBean> vertretungen;
 
-    public Vertretungsplan(VMeta meta, String[] infos, List<Map<String, String>> vertretungen) {
+    public Vertretungsplan(VMeta meta, String[] infos, List<DynaBean> vertretungen) {
         this.meta = meta;
         this.infos = infos;
         this.vertretungen = vertretungen;
@@ -25,7 +25,7 @@ public class Vertretungsplan {
         return infos;
     }
 
-    public List<Map<String, String>> getVertretungen() {
+    public List<DynaBean> getVertretungen() {
         return vertretungen;
     }
 
