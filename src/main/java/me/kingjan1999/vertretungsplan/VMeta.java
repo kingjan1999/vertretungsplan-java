@@ -1,22 +1,26 @@
 package me.kingjan1999.vertretungsplan;
 
+import com.google.gson.Gson;
+
 /**
  * Created by jan on 28.06.15.
- *
+ * <p/>
  * Meta-Infos about the Vertretungsplan (As of, Untis Version, Day, Current Page, Max Pages)
  */
 public class VMeta {
 
-    private String lastUpdated, untis_ver, tag;
-    int current, max;
+    private final String lastUpdated;
+    private final String untis_ver;
+    private final String tag;
+    private final int current;
+    private final int max;
 
     /**
-     *
      * @param lastUpdated Date the Vertretungsplan was updated
-     * @param untis_ver Version of Untis Software
-     * @param tag Day of the Vertretungsplan
-     * @param current Current Page
-     * @param max Max Pages
+     * @param untis_ver   Version of Untis Software
+     * @param tag         Day of the Vertretungsplan
+     * @param current     Current Page
+     * @param max         Max Pages
      */
     public VMeta(String lastUpdated, String untis_ver, String tag, int current, int max) {
         this.lastUpdated = lastUpdated;
@@ -44,6 +48,11 @@ public class VMeta {
 
     public int getMax() {
         return max;
+    }
+
+    public String toJSON() {
+        Gson gson = new Gson();
+        return gson.toJson(this);
     }
 
     @Override

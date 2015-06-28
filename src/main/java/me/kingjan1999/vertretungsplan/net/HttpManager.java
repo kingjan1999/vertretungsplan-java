@@ -13,6 +13,7 @@ import java.net.URL;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 /**
  * Class for downloading and analyzing Vertretungsplan
@@ -20,7 +21,7 @@ import java.util.regex.Pattern;
 public class HttpManager {
 
 
-    final Document doc;
+    private final Document doc;
 
     public HttpManager(String url) throws IOException {
         doc = Jsoup.connect(url).get();
@@ -64,7 +65,6 @@ public class HttpManager {
 
     private VMeta getMeta(Document doc) {
         String untis_ver = doc.head().getElementsByAttributeValue("name", "generator").get(0).attributes().get("content");
-        System.out.println(untis_ver);
 
         Element meta = doc.select(".mon_head").get(0).select("tr").get(0); //Get table with class mon_head -> First Row
         Elements tds = meta.select("td");
@@ -82,13 +82,12 @@ public class HttpManager {
         String tagW = doc.select(".mon_title").get(0).text();
         String tag = "Unbekannt";
 
-        System.out.println(tagW);
-        Pattern shortDate = Pattern.compile("\\d{2}\\.\\d{1}\\.\\d{4}"); //Format: dd:M:YYYY (e.g. 29.6.2015)
+        Pattern shortDate = Pattern.compile("\\d{2}\\.\\d\\.\\d{4}"); //Format: dd:M:YYYY (e.g. 29.6.2015)
         Matcher ms = shortDate.matcher(tagW);
         if (ms.find())
             tag = ms.group(0);
 
-        Pattern page = Pattern.compile("(\\d) \\/ (\\d)"); //Format der Seiten: 1 / 2
+        Pattern page = Pattern.compile("(\\d) / (\\d)"); //Format der Seiten: 1 / 2
         Matcher mp = page.matcher(tagW);
 
         int max = 1;
@@ -113,10 +112,8 @@ public class HttpManager {
         Elements headings = vertretungen.get(0).select("th");
 
         //Iterate headings
-        for (Element heading : headings) {
-            //System.out.println(heading.text());
-            cats.add(heading.text());
-        }
+        //System.out.println(heading.text());
+        cats.addAll(headings.stream().map(Element::text).collect(Collectors.toList()));
 
         for (int i = 1; i < vertretungen.size(); i++) {
             Elements cols = vertretungen.get(i).select("td");

@@ -14,6 +14,8 @@ import static org.junit.Assert.fail;
 
 /**
  * Created by jan on 26.06.15.
+ * Test Class for HttpManager
+ *
  */
 public class HttpTest {
 
@@ -24,7 +26,7 @@ public class HttpTest {
     private String heute_url = "http://ohgspringe.de/phocadownload/plan/subst_001.htm";
     private String morgen_url = "http://ohgspringe.de/phocadownload/plan/subst_002.htm";
 
-    private String anotherUrl = "http://vertretungsplan.gymnasium-eversten.de/subst_002.htm";
+    private final String anotherUrl = "http://vertretungsplan.gymnasium-eversten.de/subst_002.htm";
 
     /**
      * Test download of the Vertretungsplan
