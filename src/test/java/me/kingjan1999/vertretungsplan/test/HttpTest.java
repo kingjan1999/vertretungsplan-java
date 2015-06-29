@@ -2,12 +2,13 @@ package me.kingjan1999.vertretungsplan.test;
 
 import me.kingjan1999.vertretungsplan.Vertretungsplan;
 import me.kingjan1999.vertretungsplan.net.HttpManager;
+import org.apache.commons.beanutils.DynaBean;
 import org.junit.Test;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.URISyntaxException;
 import java.net.URL;
+import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
@@ -15,7 +16,6 @@ import static org.junit.Assert.fail;
 /**
  * Created by jan on 26.06.15.
  * Test Class for HttpManager
- *
  */
 public class HttpTest {
 
@@ -45,19 +45,13 @@ public class HttpTest {
 
     /**
      * Test for the downloaded testPlan1.html
-     *
-     * @throws IOException
-     * @throws URISyntaxException
-     */
+     **/
     @Test
-    public void testPlan1() throws IOException, URISyntaxException {
-        URL url = this.getClass().getResource("/testPlan1.html");
-        HttpManager hp1;
+    public void testPlan1() {
         Vertretungsplan p1 = null;
         try {
-            hp1 = new HttpManager(new File(url.getFile()));
-            p1 = hp1.fetchPlan();
-        } catch (IOException | InstantiationException | IllegalAccessException e) {
+            p1 = fetchFromFile("/testPlan1.html");
+        } catch (IOException | IllegalAccessException | InstantiationException e) {
             e.printStackTrace();
             fail();
         }
@@ -79,18 +73,12 @@ public class HttpTest {
 
     /**
      * Test for the downloaded testPlan2.html
-     *
-     * @throws IOException
-     * @throws URISyntaxException
      */
     @Test
-    public void testPlan2() throws IOException, URISyntaxException {
-        URL url = this.getClass().getResource("/testPlan2.html");
-        HttpManager hp2;
+    public void testPlan2() {
         Vertretungsplan p2 = null;
         try {
-            hp2 = new HttpManager(new File(url.getFile()));
-            p2 = hp2.fetchPlan();
+            p2 = fetchFromFile("/testPlan2.html");
         } catch (IOException | IllegalAccessException | InstantiationException e) {
             e.printStackTrace();
             fail();
@@ -110,5 +98,35 @@ public class HttpTest {
         assertEquals("2", p2.getVertretungen().get(2).get("Stunde"));
         assertEquals("---", p2.getVertretungen().get(8).get("Raum"));
         assertEquals("WN", p2.getVertretungen().get(15).get("(Fach)"));
+    }
+
+    @Test
+    public void testFilter() {
+        Vertretungsplan p1 = null;
+        try {
+            p1 = fetchFromFile("/testPlan1.html");
+        } catch (IOException | IllegalAccessException | InstantiationException e) {
+            e.printStackTrace();
+            fail();
+        }
+
+        List<DynaBean> found = p1.getVertretungenForCourse("5a", 0);
+
+        assertEquals(1, found.size());
+
+        found = p1.getVertretungenForCourse("10B");
+
+        assertEquals(4, found.size());
+
+        found = p1.getVertretungenForCourse("10");
+
+        assertEquals(9, found.size());
+    }
+
+
+    private Vertretungsplan fetchFromFile(String fileName) throws IllegalAccessException, IOException, InstantiationException {
+        URL url = this.getClass().getResource(fileName);
+        HttpManager hp = new HttpManager(new File(url.getFile()));
+        return hp.fetchPlan();
     }
 }
