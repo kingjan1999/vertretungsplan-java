@@ -54,7 +54,7 @@ public class HttpManager {
         String[] infos = new String[0];
         if (infotr != null) {
 
-            List<String> entries = new ArrayList<String>(Arrays.asList(infotr.html().split("<br>")));
+            List<String> entries = new ArrayList<>(Arrays.asList(infotr.html().split("<br>")));
 
             entries.removeIf(s -> s == null || s.trim().isEmpty()); //Remove empty / nulled entries
 
@@ -104,8 +104,8 @@ public class HttpManager {
         return new VMeta(stand, untis_ver, tag, current, max);
     }
 
-    private List<DynaBean> getVertretungen(Document doc) throws InstantiationException, IllegalAccessException {
-        List<String> cats = new ArrayList<String>(7);
+    private List<DynaBean> getVertretungen(Document doc) {
+        List<String> cats = new ArrayList<>(7);
 
         List<DynaBean> vf = new ArrayList<>(20);
 

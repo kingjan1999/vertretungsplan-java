@@ -42,8 +42,8 @@ public class Vertretungsplan {
      * @return List<DynaBean> containing all found courses
      */
     public List<DynaBean> getVertretungenForCourse(String course, int classIndex) {
-        List<DynaBean> found = new ArrayList<DynaBean>();
-        if (vertretungen.size() < 0) {
+        List<DynaBean> found = new ArrayList<>();
+        if (vertretungen.size() <= 0) {
             return found;
         }
         String colName = vertretungen.get(0).getDynaClass().getDynaProperties()[classIndex].getName(); //Read col name from first Vertretung
